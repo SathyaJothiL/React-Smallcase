@@ -4,8 +4,8 @@ import SmallCases from './SmallCases'
 
 const SmallCaseContainer = () => {
   return (
-    <div className='ml-[10px] flex'>
-      {/* <Message/> */}
+    <div className='mx-[80px] flex flex-col'>
+      <Message/>
       <SmallCases/>
      
     </div>

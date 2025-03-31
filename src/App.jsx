@@ -9,7 +9,7 @@ import SmallCaseContainer from './Components/SmallCaseContainer'
 const App = () => {
   return (
     <div>
-      {/* <MainLayout/> */}
+      <MainLayout/>
       <SmallCaseContainer/>
     </div>
   )
