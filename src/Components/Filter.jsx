@@ -1,7 +1,9 @@
 import React from "react";
-import low from "../assets/icons/Low.png";
-import medium from "../assets/icons/2.png";
-import high from "../assets/icons/3.png";
+import InvestmentFilter from "./InvestmentFilter";
+import SubscriptionFilter from "./SubscriptionFilter";
+import VolatilityFilter from "./VolatilityFilter";
+import InvStrategyFilter from "./InvStrategyFilter";
+import ClearAll from "./ClearAll";
 
 export const Filter = ({
   subscription,
@@ -9,23 +11,14 @@ export const Filter = ({
   handleAmount,
   amount,
   handleVolatility,
-  volatality,
+  volatilities,
   investmentStrategySet,
-  setInvestment,
-  investment,
   hanldeInvestment,
-  handleNewSmallCase
+  handleNewSmallCase,
+  handleClearAll
 }) => {
-  // console.log(volatality);
-  // console.log(investmentStrategySet);
   const buttonList = ["Show All", "Free Access", "Fee Based"];
   const radioList = ["any", "5000", "25000", "50000"];
-  const radioListName = [
-    "Any",
-    "Under ₹ 5,000",
-    "Under ₹ 25,000",
-    "Under ₹ 5,0000",
-  ];
 
   return (
     <div className="mr-6 w-1/4">
@@ -36,26 +29,23 @@ export const Filter = ({
             0
           </span>
         </div>
+        <ClearAll
+        handleClearAll={handleClearAll}
+        />
       </div>
+
       <section className="flex flex-col mb-6">
         <h3 className="mb-3 text-[rgb(83,91,98)] font-extrabold">
           Subscription Type
         </h3>
         <div className="flex">
           {buttonList.map((button) => (
-            <button
-              key={button}
-              value={button}
-              onClick={(e) => handleSubscription(e)}
-              className={
-                "px-5 font-bold flex-1 " +
-                (subscription === button
-                  ? "text-[rgb(31,122,224)] bg-[rgba(31,122,224,0.1)]"
-                  : "text-[rgb(129,135,140)]")
-              }
-            >
-              <span className="break-words whitespace-normal">{button}</span>
-            </button>
+            <SubscriptionFilter
+            key={button}
+              handleSubscription={handleSubscription}
+              subscription={subscription}
+              button={button}
+            />
           ))}
         </div>
       </section>
@@ -66,76 +56,23 @@ export const Filter = ({
         </h3>
         <div className="flex flex-col">
           {radioList.map((button, index) => (
-            <div className="px-2 py-1 mb-1" key={index}>
-              <input
-                id={button}
-                type="radio"
-                value={button}
-                onChange={(e) => handleAmount(e)}
-                checked={button===amount ? true : false}
-                className={
-                  " border border-black " +
-                  (amount === button ? "bg-pink-300" : "")
-                }
-              ></input>
-              <label htmlFor={button}>{radioListName[index]}</label>
-            </div>
+            <InvestmentFilter
+              key={index} 
+              button={button}
+              handleAmount={handleAmount}
+              amount={amount}
+              index={index}
+            />
           ))}
         </div>
       </section>
 
       <section className="flex flex-col mb-6">
         <h3 className="mb-3 text-[rgb(83,91,98)] font-extrabold">Volatility</h3>
-        <div className="flex gap-1">
-          <label
-            className={
-              "rounded-sm " + (volatality.includes("Low Volatility") ? "border-2 border-[rgb(31,122,224)]" : "")
-            }
-          >
-            <input
-              type="checkbox"
-              value="Low Volatility"
-              onChange={(e) => handleVolatility(e)}
-              className="hidden"
-            ></input>
-            <div className="flex flex-col px-2 m-1 justify-center items-center">
-              <img src={low} className="w-10 h-10"></img>
-              <p>Low</p>
-            </div>
-          </label>
-          <label
-            className={
-              "rounded-sm " + (volatality.includes("Medium Volatility") ? "border-2 border-[rgb(31,122,224)]" : "")
-            }
-          >
-            <input
-              type="checkbox"
-              value="Medium Volatility"
-              onChange={(e) => handleVolatility(e)}
-              className="hidden"
-            ></input>
-            <div className="flex flex-col px-2 m-1 justify-center items-center">
-              <img src={medium} className="w-10 h-10"></img>
-              <p>medium</p>
-            </div>
-          </label>
-          <label
-            className={
-              "rounded-sm " + (volatality.includes("High Volatility") ? "border-2 border-[rgb(31,122,224)]" : "")
-            }
-          >
-            <input
-              type="checkbox"
-              value="High Volatility"
-              onChange={(e) => handleVolatility(e)}
-              className="hidden"
-            ></input>
-            <div className="flex flex-col px-2 m-1 justify-center items-center">
-              <img src={high} className="w-10 h-10"></img>
-              <p>High</p>
-            </div>
-          </label>
-        </div>
+        <VolatilityFilter
+          volatilities={volatilities}
+          handleVolatility={handleVolatility}
+        />
       </section>
 
       <section className="flex flex-col mb-6">
@@ -143,7 +80,12 @@ export const Filter = ({
           Launch Date
         </h1>
         <label htmlFor="launch" className="flex items-center">
-          <input type="checkbox" id="launch" className="mr-1" onChange={handleNewSmallCase}></input>
+          <input
+            type="checkbox"
+            id="launch"
+            className="mr-1"
+            onChange={handleNewSmallCase}
+          ></input>
           Include new smallcases
         </label>
       </section>
@@ -153,17 +95,13 @@ export const Filter = ({
           Investment Strategy
         </h1>
 
-        {investmentStrategySet.map((item) => {
+        {investmentStrategySet.map((strategy) => {
           return (
-            <label className="px-2 py-1 flex items-center" key={item}>
-              <input
-                type="checkbox"
-                value={item}
-                onChange={(e) => hanldeInvestment(e)}
-                className="before: mr-1"
-              ></input>
-              {item}
-            </label>
+            <InvStrategyFilter
+            key={strategy}
+              strategy={strategy}
+              hanldeInvestment={hanldeInvestment}
+            />
           );
         })}
       </section>

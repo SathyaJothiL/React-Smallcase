@@ -1,15 +1,16 @@
 import React from "react";
-import { Card } from "./SmallcaseCard";
+import SmallcaseCard from "./SmallcaseCard";
 import CalloutCard from "./CalloutCard";
+import ScNotFound from './ScNotFound'
 
 const SmallCaseBody = ({lists}) => {
   return (
     <div  className="flex flex-col w-full">
       <CalloutCard />
       {lists.length <= 0
-        ? "sory"
+        ? <ScNotFound/>
         : lists.map((smallcase, index) => (
-            <Card key={index} smallcase={smallcase} />
+            <SmallcaseCard key={index} smallcase={smallcase} />
           ))}
     </div>
   );
