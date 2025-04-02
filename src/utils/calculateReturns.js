@@ -18,7 +18,6 @@ export function calculateReturns(smallCase, returns) {
     returnsPeriod = "yearly";
   }
   percentage = (smallCase.stats.returns[returnsPeriod] * 100).toFixed(2) + "%";
-  console.log(percentage);
 
   return percentage;
 }

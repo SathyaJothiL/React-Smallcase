@@ -1,32 +1,26 @@
 import React from "react";
 import { useState } from "react";
-import smallCaseList from "../../smallcases.json";
 import { Filter } from "./Filter";
 import SmallCaseBody from "./SmallCaseBody";
-import Sorters from "./Sorters";
 import Message from "./Message";
-import DiscoverNavbar from "../Components/DiscoverNavbar";
+import DiscoverNavbar from "./DiscoverNavbar";
+import smallCaseData from "../../public/data/smallcaseData";
+import { investmentStrategySet } from "../../public/data/lists";
 
 import { getList } from "../utils";
-import { getSorterLists, getReturnsLists } from "../utils";
+import {
+  getSorterLists,
+  getReturnsLists,
+  calculateFilterCount,
+} from "../utils";
 
 const SmallCases = () => {
   const [subscription, setSubscription] = useState("Show All");
-
   const [amount, setAmount] = useState("any");
-  let smallCaseData = smallCaseList["data"];
-  const [lists, setLists] = useState(smallCaseData);
+  let [lists, setLists] = useState(smallCaseData);
+  const [volatilities, setVolatility] = useState(new Set());
 
-  const [volatilities, setVolatility] = useState([]);
-
-  const investmentStrategyList = smallCaseData.map((item) => {
-    let temp = item.info.investmentStrategy;
-    let t = temp.map((item) => item.key);
-    return t;
-  });
-  const investmentStrategySet = new Set(investmentStrategyList.flat());
-
-  const [investment, setInvestment] = useState([]);
+  const [investment, setInvestment] = useState(new Set());
   const [newSmallCase, setNewSmallCase] = useState(false);
   const [sorter, setSorter] = useState(null);
   const [returns, setReturns] = useState(null);
@@ -37,80 +31,50 @@ const SmallCases = () => {
     amount: amount,
     volatilities: volatilities,
     investment: investment,
-    smallCaseData: smallCaseData,
-    setLists: setLists,
+    newSmallCase: newSmallCase,
   };
+  let filterCount = calculateFilterCount({ ...filters });
+
+  lists = getList({ ...filters, smallCaseData: smallCaseData });
 
   function handleSubscription(e) {
     setSubscription(e.target.textContent);
-    getList({
-      sub: e.target.textContent,
-      ...filters,
-    });
   }
 
   function handleAmount(e) {
     setAmount(e.target.value);
-    getList({
-      amounts: e.target.value,
-      ...filters,
-    });
   }
 
   function handleVolatility(e) {
     let inputValue = e.target.value;
-    if (volatilities.includes(inputValue)) {
-      let filterVolatility = volatilities.filter(
-        (volatility) => volatility !== inputValue
-      );
-      getList({
-        volatility: [...filterVolatility],
-        ...filters,
-      });
-      setVolatility(filterVolatility);
-      return;
+    console.log("hi");
+    let newVolatility = new Set(volatilities);
+    if (volatilities.has(inputValue)) {
+      newVolatility.delete(inputValue);
+    } else {
+      newVolatility.add(inputValue);
     }
-    let newVolatility = [...volatilities, inputValue];
-    getList({
-      volatility: newVolatility,
-      ...filters,
-    });
     setVolatility(newVolatility);
   }
 
   function handleNewSmallCase(e) {
-    setNewSmallCase(e.target.checked);
-    getList({
-      newsc: e.target.checked,
-      ...filters,
-    });
+    setNewSmallCase(!newSmallCase);
   }
 
   function hanldeInvestment(e) {
     let val = e.target.value;
-
-    if (investment.includes(val)) {
-      let filteredLists = investment.filter((item) => item !== val);
-      getList({
-        investments: [...filteredLists],
-        ...filters,
-      });
-      setInvestment(filteredLists);
-      return;
+    let newInvestment = new Set(investment);
+    if (newInvestment.has(val)) {
+      newInvestment.delete(val);
+    } else {
+      newInvestment.add(val);
     }
-
-    let newInvestment = [...investment, val];
-    getList({
-      investments: newInvestment,
-      ...filters,
-    });
     setInvestment(newInvestment);
   }
 
   function handleSorter(e) {
     let sortName = e.target.value;
-    setSorter(e.target.value);
-    getSorterLists({ sortName: sortName, lists: lists });
+    setSorter(sortName);
     setReturns(null);
     setOrder(null);
   }
@@ -118,11 +82,6 @@ const SmallCases = () => {
   function handleOrder(e) {
     let orderName = e.target.textContent;
     setOrder(orderName);
-    getReturnsLists({
-      returnsValue: returns,
-      orderName: orderName,
-      lists: lists,
-    });
   }
 
   function handleReturns(e) {
@@ -131,26 +90,28 @@ const SmallCases = () => {
     setReturns(returnsValue);
     if (order === null) {
       setOrder("High-Low");
-      getReturnsLists({
-        returnsValue: returnsValue,
-        orderName: "High-Low",
-        lists: lists,
-      });
-    } else {
-      getReturnsLists({
-        returnsValue: returnsValue,
-        orderName: order,
-        lists: lists,
-      });
     }
+  }
+
+  const sorts = {
+    sorter: sorter,
+    returns: returns,
+    order: order,
+    lists: lists,
+  };
+
+  if (sorter) {
+    lists = getSorterLists({ ...sorts });
+  } else if (returns) {
+    lists = getReturnsLists({ ...sorts });
   }
 
   function handleClearAll() {
     setSubscription("Show All");
     setAmount("any");
     setLists(smallCaseData);
-    setVolatility([]);
-    setInvestment([]);
+    setVolatility(new Set());
+    setInvestment(new Set());
     setNewSmallCase(false);
   }
   return (
@@ -166,6 +127,7 @@ const SmallCases = () => {
       <Message />
       <div className="flex w-full">
         <Filter
+          filterCount={filterCount}
           subscription={subscription}
           handleSubscription={handleSubscription}
           handleAmount={handleAmount}
@@ -175,11 +137,16 @@ const SmallCases = () => {
           investmentStrategySet={[...investmentStrategySet]}
           setInvestment={setInvestment}
           investment={investment}
+          newSmallCase={newSmallCase}
           hanldeInvestment={hanldeInvestment}
           handleNewSmallCase={handleNewSmallCase}
           handleClearAll={handleClearAll}
         />
-        <SmallCaseBody lists={lists} returns={returns} />
+        <SmallCaseBody
+          lists={lists}
+          returns={returns}
+          handleClearAll={handleClearAll}
+        />
       </div>
     </>
   );

@@ -1,38 +1,38 @@
-export function getSorterLists({ sortName, lists }) {
+export function getSorterLists({ sorter, lists }) {
   let resLists;
-  if (sortName !== undefined) {
-    if (sortName === "Popularity") {
+  if (sorter !== undefined) {
+    if (sorter === "Popularity") {
       resLists = getPopularity(lists);
     }
-    if (sortName === "Minimum Amount") {
+    if (sorter === "Minimum Amount") {
       resLists = getMinimumAmount(lists);
     }
-    if (sortName === "Recently Rebalanced") {
+    if (sorter === "Recently Rebalanced") {
       resLists = getLastRebalanced(lists);
     }
     return resLists;
   }
 }
 
-export function getReturnsLists({ returnsValue, orderName, lists }) {
+export function getReturnsLists({ returns, order, lists }) {
   let returnLists = [];
   let returnsPeriod;
-  if (returnsValue === "1M") {
+  if (returns === "1M") {
     returnsPeriod = "monthly";
   }
-  if (returnsValue === "6M") {
+  if (returns === "6M") {
     returnsPeriod = "halfyearly";
   }
-  if (returnsValue === "1Y") {
+  if (returns === "1Y") {
     returnsPeriod = "yearly";
   }
-  if (returnsValue === "3Y") {
+  if (returns === "3Y") {
     returnsPeriod = "threeYear";
   }
-  if (returnsValue === "5Y") {
+  if (returns === "5Y") {
     returnsPeriod = "fiveYear";
   }
-  if (orderName === "High-Low") {
+  if (order === "High-Low") {
     returnLists = lists.sort((a, b) => {
       return b.stats.returns[returnsPeriod] - a.stats.returns[returnsPeriod];
     });

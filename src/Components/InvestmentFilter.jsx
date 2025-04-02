@@ -1,12 +1,7 @@
 import React from "react";
+import { radioListName } from "../../public/data/lists";
 
 const InvestmentFilter = ({ button, handleAmount, amount, index }) => {
-  const radioListName = [
-    "Any",
-    "Under ₹ 5,000",
-    "Under ₹ 25,000",
-    "Under ₹ 5,0000",
-  ];
   return (
     <div className="px-2 py-1 mb-1">
       <input

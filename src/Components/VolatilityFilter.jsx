@@ -11,11 +11,12 @@ const VolatilityFilter = ({ volatilities, handleVolatility }) => {
   ];
   return (
     <div className="flex gap-1">
-      {volLists.map((vol) => (
+      {volLists.map((vol, index) => (
         <label
+          key={index}
           className={
             "rounded-sm " +
-            (volatilities.includes(vol.name)
+            (volatilities.has(vol.name)
               ? "border-2 border-[rgb(31,122,224)]"
               : "")
           }

@@ -4,21 +4,24 @@ import SubscriptionFilter from "./SubscriptionFilter";
 import VolatilityFilter from "./VolatilityFilter";
 import InvStrategyFilter from "./InvStrategyFilter";
 import ClearAll from "./ClearAll";
+import { buttonList,radioList} from '../../public/data/lists'
 
 export const Filter = ({
+  filterCount,
   subscription,
   handleSubscription,
   handleAmount,
   amount,
   handleVolatility,
   volatilities,
+  newSmallCase,
+  investment,
   investmentStrategySet,
   hanldeInvestment,
   handleNewSmallCase,
   handleClearAll
 }) => {
-  const buttonList = ["Show All", "Free Access", "Fee Based"];
-  const radioList = ["any", "5000", "25000", "50000"];
+
 
   return (
     <div className="mr-6 w-1/4">
@@ -26,7 +29,7 @@ export const Filter = ({
         <div>
           Filter
           <span className="px-2 py-1 bg-[rgb(231,233,234)] ml-2 rounded-sm">
-            0
+            {filterCount}
           </span>
         </div>
         <ClearAll
@@ -84,6 +87,7 @@ export const Filter = ({
             type="checkbox"
             id="launch"
             className="mr-1"
+            checked={newSmallCase}
             onChange={handleNewSmallCase}
           ></input>
           Include new smallcases
@@ -98,6 +102,7 @@ export const Filter = ({
         {investmentStrategySet.map((strategy) => {
           return (
             <InvStrategyFilter
+            investment={investment}
             key={strategy}
               strategy={strategy}
               hanldeInvestment={hanldeInvestment}
