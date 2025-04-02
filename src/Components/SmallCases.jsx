@@ -92,6 +92,14 @@ const SmallCases = () => {
       setOrder("High-Low");
     }
   }
+  function handleClearAll() {
+    setSubscription("Show All");
+    setAmount("any");
+    setLists(smallCaseData);
+    setVolatility(new Set());
+    setInvestment(new Set());
+    setNewSmallCase(false);
+  }
 
   const sorts = {
     sorter: sorter,
@@ -105,15 +113,14 @@ const SmallCases = () => {
   } else if (returns) {
     lists = getReturnsLists({ ...sorts });
   }
-
-  function handleClearAll() {
-    setSubscription("Show All");
-    setAmount("any");
-    setLists(smallCaseData);
-    setVolatility(new Set());
-    setInvestment(new Set());
-    setNewSmallCase(false);
-  }
+  const handlers = {
+    handleSubscription: handleSubscription,
+    handleAmount: handleAmount,
+    handleVolatility: handleVolatility,
+    hanldeInvestment: hanldeInvestment,
+    handleNewSmallCase: handleNewSmallCase,
+    handleClearAll: handleClearAll,
+  };
   return (
     <>
       <DiscoverNavbar
@@ -128,19 +135,8 @@ const SmallCases = () => {
       <div className="flex w-full">
         <Filter
           filterCount={filterCount}
-          subscription={subscription}
-          handleSubscription={handleSubscription}
-          handleAmount={handleAmount}
-          amount={amount}
-          handleVolatility={handleVolatility}
-          volatilities={volatilities}
-          investmentStrategySet={[...investmentStrategySet]}
-          setInvestment={setInvestment}
-          investment={investment}
-          newSmallCase={newSmallCase}
-          hanldeInvestment={hanldeInvestment}
-          handleNewSmallCase={handleNewSmallCase}
-          handleClearAll={handleClearAll}
+          filters={filters}
+          handlers={handlers}
         />
         <SmallCaseBody
           lists={lists}

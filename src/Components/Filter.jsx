@@ -3,113 +3,52 @@ import InvestmentFilter from "./InvestmentFilter";
 import SubscriptionFilter from "./SubscriptionFilter";
 import VolatilityFilter from "./VolatilityFilter";
 import InvStrategyFilter from "./InvStrategyFilter";
-import ClearAll from "./ClearAll";
-import { buttonList,radioList} from '../../public/data/lists'
+import FilterComponent from "./FilterComponent";
+import NewScFilter from "./NewScFilter";
+import FilterHeader from "./FilterHeader";
 
-export const Filter = ({
-  filterCount,
-  subscription,
-  handleSubscription,
-  handleAmount,
-  amount,
-  handleVolatility,
-  volatilities,
-  newSmallCase,
-  investment,
-  investmentStrategySet,
-  hanldeInvestment,
-  handleNewSmallCase,
-  handleClearAll
-}) => {
-
-
+export const Filter = ({ filterCount, handlers, filters }) => {
   return (
     <div className="mr-6 w-1/4">
-      <div className="flex justify-between items-center py-4 mt-6 mb-4">
-        <div>
-          Filter
-          <span className="px-2 py-1 bg-[rgb(231,233,234)] ml-2 rounded-sm">
-            {filterCount}
-          </span>
-        </div>
-        <ClearAll
-        handleClearAll={handleClearAll}
+      <FilterHeader
+        handleClearAll={handlers.handleClearAll}
+        filterCount={filterCount}
+      />
+      <FilterComponent title="Subscription Type">
+        <SubscriptionFilter
+          handleSubscription={handlers.handleSubscription}
+          subscription={filters.subscription}
         />
-      </div>
+      </FilterComponent>
 
-      <section className="flex flex-col mb-6">
-        <h3 className="mb-3 text-[rgb(83,91,98)] font-extrabold">
-          Subscription Type
-        </h3>
-        <div className="flex">
-          {buttonList.map((button) => (
-            <SubscriptionFilter
-            key={button}
-              handleSubscription={handleSubscription}
-              subscription={subscription}
-              button={button}
-            />
-          ))}
-        </div>
-      </section>
+      <FilterComponent title="Investement Amount">
+        <InvestmentFilter
+          handleAmount={handlers.handleAmount}
+          amount={filters.amount}
+          flexDirection = 'flex-col'
+        />
+      </FilterComponent>
 
-      <section className="flex flex-col mb-6">
-        <h3 className="mb-3 text-[rgb(83,91,98)] font-extrabold">
-          Investement Amount
-        </h3>
-        <div className="flex flex-col">
-          {radioList.map((button, index) => (
-            <InvestmentFilter
-              key={index} 
-              button={button}
-              handleAmount={handleAmount}
-              amount={amount}
-              index={index}
-            />
-          ))}
-        </div>
-      </section>
-
-      <section className="flex flex-col mb-6">
-        <h3 className="mb-3 text-[rgb(83,91,98)] font-extrabold">Volatility</h3>
+      <FilterComponent title="Volatility">
         <VolatilityFilter
-          volatilities={volatilities}
-          handleVolatility={handleVolatility}
+          volatilities={filters.volatilities}
+          handleVolatility={handlers.handleVolatility}
         />
-      </section>
+      </FilterComponent>
 
-      <section className="flex flex-col mb-6">
-        <h1 className="mb-3 text-[rgb(83,91,98)] font-extrabold">
-          Launch Date
-        </h1>
-        <label htmlFor="launch" className="flex items-center">
-          <input
-            type="checkbox"
-            id="launch"
-            className="mr-1"
-            checked={newSmallCase}
-            onChange={handleNewSmallCase}
-          ></input>
-          Include new smallcases
-        </label>
-      </section>
+      <FilterComponent title="Launch Date">
+        <NewScFilter
+          handleNewSmallCase={handlers.handleNewSmallCase}
+          newSmallCase={filters.newSmallCase}
+        />
+      </FilterComponent>
 
-      <section className="flex flex-col gap-2">
-        <h1 className="mb-3 text-[rgb(83,91,98)] font-extrabold">
-          Investment Strategy
-        </h1>
-
-        {investmentStrategySet.map((strategy) => {
-          return (
-            <InvStrategyFilter
-            investment={investment}
-            key={strategy}
-              strategy={strategy}
-              hanldeInvestment={hanldeInvestment}
-            />
-          );
-        })}
-      </section>
+      <FilterComponent title="Investment Strategy">
+        <InvStrategyFilter
+          investment={filters.investment}
+          hanldeInvestment={handlers.hanldeInvestment}
+        />
+      </FilterComponent>
     </div>
   );
 };
