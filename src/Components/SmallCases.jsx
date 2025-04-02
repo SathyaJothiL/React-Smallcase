@@ -17,7 +17,7 @@ import {
 const SmallCases = () => {
   const [subscription, setSubscription] = useState("Show All");
   const [amount, setAmount] = useState("any");
-  let [lists, setLists] = useState(smallCaseData);
+  let lists = smallCaseData
   const [volatilities, setVolatility] = useState(new Set());
 
   const [investment, setInvestment] = useState(new Set());
