@@ -4,10 +4,12 @@ import smallCaseList from "../../smallcases.json";
 import { Filter } from "./Filter";
 import SmallCaseBody from "./SmallCaseBody";
 import Sorters from "./Sorters";
-import Message from './Message'
+import Message from "./Message";
 import DiscoverNavbar from "../Components/DiscoverNavbar";
 
 import { getList } from "../utils";
+import { getSorterLists, getReturnsLists } from "../utils";
+
 const SmallCases = () => {
   const [subscription, setSubscription] = useState("Show All");
 
@@ -27,8 +29,8 @@ const SmallCases = () => {
   const [investment, setInvestment] = useState([]);
   const [newSmallCase, setNewSmallCase] = useState(false);
   const [sorter, setSorter] = useState(null);
-  const [returns,setReturns] = useState(null)
-  const [ order,setOrder] = useState('High-Low')
+  const [returns, setReturns] = useState(null);
+  const [order, setOrder] = useState(null);
 
   const filters = {
     subscription: subscription,
@@ -36,7 +38,7 @@ const SmallCases = () => {
     volatilities: volatilities,
     investment: investment,
     smallCaseData: smallCaseData,
-    setLists:setLists
+    setLists: setLists,
   };
 
   function handleSubscription(e) {
@@ -83,20 +85,6 @@ const SmallCases = () => {
       ...filters,
     });
   }
-  function handleSorter(e){
-    let sortName = e.target.value
-    setSorter(e.target.value)
-    console.log(e.target.value);
-    if(sortName==='Popularity'){
-      handlePopularity()
-    }
-    if(sortName==='Minimum Amount'){
-      handleMinimumAmount()
-    }
-    if(sortName==='Recently Rebalanced'){
-      handleLastRebalanced()
-    }
-  }
 
   function hanldeInvestment(e) {
     let val = e.target.value;
@@ -119,92 +107,44 @@ const SmallCases = () => {
     setInvestment(newInvestment);
   }
 
-  function handleOrder(e){
-    console.log('niod');
-    let orderName = e.target.textContent
-    setOrder(orderName)
-    getReturns({orderName:orderName,returnsValue:returns})
+  function handleSorter(e) {
+    let sortName = e.target.value;
+    setSorter(e.target.value);
+    getSorterLists({ sortName: sortName, lists: lists });
+    setReturns(null);
+    setOrder(null);
   }
 
-
-function handleReturns(e){
-  let returnsValue = e.target.textContent
-  setReturns(returnsValue)
-  getReturns({returnsValue:returnsValue})
-}
-function getReturns({returnsValue,orderName}){
-  console.log(orderName,'on');
-  
-  let returnLists = []
-  let returnsPeriod
-  if(returnsValue==='1M'){
-    returnsPeriod='monthly'
-  }
-  if(returnsValue==='6M'){
-    returnsPeriod='halfyearly'
-  }
-  if(returnsValue==='1Y'){
-    returnsPeriod='yearly'
-  }
-  if(returnsValue==='3Y'){
-    returnsPeriod='threeYear'
-  }
-  if(returnsValue==='5Y'){
-    returnsPeriod='fiveYear'
-  }
-  if(orderName==='High-Low'||orderName===undefined){
-    console.log('here');
-    console.log(returnsValue);
-    
-    returnLists = lists.sort((a,b)=>{
-      return b.stats.returns[returnsPeriod]-a.stats.returns[returnsPeriod]
-    })
-  }else{
-    returnLists = lists.sort((a,b)=>{
-      return a.stats.returns[returnsPeriod]-b.stats.returns[returnsPeriod]
-    })
-  }
-  
-  setLists(returnLists)
-}
-
-  function handlePopularity() {
-    let popularityLists = lists.sort((a,b)=>{
-      return a.brokerMeta.flags.popular.rank-b.brokerMeta.flags.popular.rank
-    })
-    setLists(popularityLists)
-  }
-
-  function handleMinimumAmount() {
-    console.log(lists);
-
-    let s = lists.sort((a, b) => {
-      console.log(a.stats.minInvestAmount);
-      return a.stats.minInvestAmount - b.stats.minInvestAmount;
+  function handleOrder(e) {
+    let orderName = e.target.textContent;
+    setOrder(orderName);
+    getReturnsLists({
+      returnsValue: returns,
+      orderName: orderName,
+      lists: lists,
     });
-    console.log(s);
-
-    setLists([...s]);
   }
-  function handleLastRebalanced() {
-    let s = lists.sort((a, b) => {
-      if (
-        a.info.lastRebalanced === undefined ||
-        b.info.lastRebalanced === undefined
-      ) {
-        return;
-      }
-      let d1 = a.info.lastRebalanced.split("T")[0];
-      let nd1 = new Date(d1);
-      let d2 = b.info.lastRebalanced.split("T")[0];
-      let nd2 = new Date(d2);
 
-      return nd1 - nd2;
-    });
-    console.log(s);
-
-    setLists([...s]);
+  function handleReturns(e) {
+    let returnsValue = e.target.textContent;
+    setSorter(null);
+    setReturns(returnsValue);
+    if (order === null) {
+      setOrder("High-Low");
+      getReturnsLists({
+        returnsValue: returnsValue,
+        orderName: "High-Low",
+        lists: lists,
+      });
+    } else {
+      getReturnsLists({
+        returnsValue: returnsValue,
+        orderName: order,
+        lists: lists,
+      });
+    }
   }
+
   function handleClearAll() {
     setSubscription("Show All");
     setAmount("any");
@@ -216,15 +156,14 @@ function getReturns({returnsValue,orderName}){
   return (
     <>
       <DiscoverNavbar
-      handleSorter={handleSorter}
-      sorter={sorter}
-      returns={returns}
-      order={order}
-      handleReturns={handleReturns}
-      handleOrder={handleOrder}
-      
+        handleSorter={handleSorter}
+        sorter={sorter}
+        returns={returns}
+        order={order}
+        handleReturns={handleReturns}
+        handleOrder={handleOrder}
       />
-      <Message/>
+      <Message />
       <div className="flex w-full">
         <Filter
           subscription={subscription}
@@ -240,7 +179,7 @@ function getReturns({returnsValue,orderName}){
           handleNewSmallCase={handleNewSmallCase}
           handleClearAll={handleClearAll}
         />
-        <SmallCaseBody lists={lists} />
+        <SmallCaseBody lists={lists} returns={returns} />
       </div>
     </>
   );
